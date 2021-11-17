@@ -7,43 +7,9 @@
     <title>Text manipulation exercise</title>
     <script>
 
-
-        window.addEventListener('mouseup', e => {
-            const text = e.target.innerText;
-            let start = 0;
-            let end = 0;
-            let updatedText = '';
-            if (window.getSelection) {
-                selection = window.getSelection();
-                start = selection.anchorOffset;
-                end = selection.focusOffset;
-            } else if (document.selection) {
-                selection = document.selection.createRange();
-                start = selection.anchorOffset;
-                end = selection.focusOffset;
-            }
-
-            selection.toString() !== '' && console.log('"' + selection.toString() + '" was selected at ' + e.pageX + '/' + e.pageY);
-            const selectedText = selection.toString();
-            console.log('start', start, text[start])
-            console.log('end', end)
-            updatedText = [...selectedText.split('')].reverse().join('')
-            if(text[start] !== ' ' && text[start-1] !== ' ') {
-                updatedText = [...selectedText.split('')].slice(0,1).reverse().join('')
-        
-            }
-            if(text[end] !== ' ' && text[end-1] !== ' ') {
-                updatedText = [...selectedText.split('')].slice(0,-1).reverse().join('')
-            }
-           replaceSelectedText(updatedText);
-
-        });
-
-
-        function replaceSelectedText(replacementText) {
+        const replaceSelectedText = (replacementText) => {
             var sel, range;
             if (window.getSelection) {
-                console.log('window')
                 sel = window.getSelection();
                 if (sel.rangeCount) {
                     range = sel.getRangeAt(0);
@@ -51,22 +17,105 @@
                     range.insertNode(document.createTextNode(replacementText));
                 }
             } else if (document.selection && document.selection.createRange) {
-                console.log('document')
                 range = document.selection.createRange();
                 range.text = replacementText;
             }
         }
-        function handler(e) {
-            console.log(e.target)
-        }
-    </script>
 
+        const getSelectedText = () => {
+            if (window.getSelection) {
+                return window.getSelection();
+            } else if (document.selection) {
+                return document.selection.createRange();
+            }
+            return null;
+        }
+
+        const transformSelectedToBold = () => {
+            const selected = getSelectedText()
+            let span = document.createElement('SPAN');
+            span.classList.add('bold');
+            span.textContent = selected.toString();
+            var range = selected.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(span);
+        }
+
+
+        const reverseSelected = () => {
+            const selection = getSelectedText();
+            const selectedText = selection.toString();
+            const start = selection.anchorOffset;
+            const end = selection.focusOffset;
+
+           let updatedText = [...selectedText.split(' ')].reverse().join(' ')
+            if (text[start] !== ' ' && text[start - 1] !== ' ') {
+                updatedText = [...selectedText.split(' ')].slice(0, 1).reverse().join(' ')
+            }
+            if (text[end] !== ' ' && text[end + 1] !== ' ') {
+                updatedText = [...selectedText.split(' ')].slice(0, -1).reverse().join(' ')
+            }
+            replaceSelectedText(updatedText);
+        }
+
+        window.onload = () => {
+            const text = document.getElementById('text');
+            const bold = document.getElementById('bold')
+            const reverse = document.getElementById('reverse')
+
+            text.addEventListener('mouseup', e => {
+
+                const selection = getSelectedText();
+                const tooltip = document.getElementById('tooltip')
+                tooltip.style.visibility = 'visible';
+                selection.toString() !== '' &&
+                    console.log('"' + selection + '" was selected at ' + e.pageX + '/' + e.pageY);
+
+
+
+            });
+            bold.addEventListener('click', transformSelectedToBold, false)
+            reverse.addEventListener('click', reverseSelected, false)
+
+        }
+
+
+
+    </script>
+    <style>
+        /* Tooltip container */
+        #tooltip {
+            visibility: hidden;
+            width: 120px;
+            padding: 5px 0;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        /* .tooltip:hover .tooltiptext {
+  visibility: visible;
+} */
+    </style>
 </head>
 
 <body>
     <div id="root">
 
-        <div contenteditable="true">fooobar fo foo foo fooooo</div>
+        <div contenteditable="true" id="text">fooobar fo foo foo fooooo
+
+
+        </div>
+        <div id="tooltip">
+            <button id="bold">B</button>
+            <button id="reverse">R</button>
+        </div><br><br>
+
     </div>
 
 </body>
