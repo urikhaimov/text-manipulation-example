@@ -41,50 +41,34 @@
             range.insertNode(span);
         }
 
+        const replaceFirst = (data) => {
+            let arr = [...data]
+            let first = arr[0]
+            arr.shift()
+            arr.push(first)
+
+            console.log('arr1 first', arr)
+            return arr
+        }
+        const replaceLast = (data) => {
+            let arr = [...data]
+            let last = arr[arr.length - 1]
+            arr.unshift(last)
+            arr.pop()
+            console.log('last', arr)
+            return arr
+        }
         const convertSelectedToArray = (text, selectedText, start, end) => {
             let selectedArr = [...selectedText.split(' ')]
-            if (text[start] === undefined) {
-                selectedArr.push(' ')
+            let result = selectedArr
+            console.log('arr', selectedArr)
+            if ((text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) || !text[start]) {
+                result = replaceFirst(selectedArr)
             }
-            console.log('end', end, text[end])
-            if (text[end - 1] === undefined) {
-                selectedArr.unshift(' ')
-
+            if ((text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) || !text[end - 1]) {
+                result = replaceLast(selectedArr)
             }
-            //              console.log('start',start, text[start], text[start-1])
-            if (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) {
-
-                //              console.log('start', selectedArr)
-                const first = selectedArr[0]
-
-                selectedArr.shift()
-
-                if (!selectedArr[selectedArr.length - 1]) {
-                    selectedArr.pop()
-                    selectedArr.unshift(' ')
-                }
-
-                selectedArr.push(first)
-                //            console.log('start after', selectedArr)
-            }
-            console.log('end', end, text[end - 1], text[end])
-            if (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) {
-                console.log('end', selectedArr)
-                const last = selectedArr[selectedArr.length - 1]
-
-                selectedArr.pop()
-                console.log('pop', !selectedArr[0])
-              
-                if (!selectedArr[0]) {
-                    selectedArr.push(' ')
-                    console.log('in', selectedArr)
-                }
-                selectedArr.unshift(last)
-                console.log('end after', selectedArr)
-            }
-
-
-            return selectedArr.reverse()
+            return result.reverse()
         }
 
         const reverseSelected = (text) => {
@@ -96,7 +80,7 @@
             console.log(start, end)
             const r = convertSelectedToArray(text, selectedText, start, end)
             console.log('r', r)
-            replaceSelectedText([...r].join(' '));
+            replaceSelectedText(r.join(' '));
         }
 
         window.onload = () => {
