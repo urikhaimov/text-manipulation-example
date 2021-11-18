@@ -41,19 +41,35 @@
             range.insertNode(span);
         }
 
+        const convertSelectedToArray = (text) => {
+            const r = [...text.trim().split(' ')]
+            console.log('r', r)
+            return r
+        }
 
-        const reverseSelected = () => {
+        const reverseSelected = (text) => {
             const selection = getSelectedText();
-            const selectedText = selection.toString();
+            let selectedText = selection.toString();
             const start = selection.anchorOffset;
             const end = selection.focusOffset;
-
-           let updatedText = [...selectedText.split(' ')].reverse().join(' ')
-            if (text[start] !== ' ' && text[start - 1] !== ' ') {
-                updatedText = [...selectedText.split(' ')].slice(0, 1).reverse().join(' ')
+            console.log('start', start, 'end', end)
+            let updatedText = convertSelectedToArray(selectedText).reverse().join(' ')
+            console.log('text[0]', text[0])
+            console.log('text[start]', text[start], 'text[start - 1]', text[start - 1])
+            if (text[start - 1] !== ' ') {
+                updatedText = ' ' + updatedText
             }
-            if (text[end] !== ' ' && text[end + 1] !== ' ') {
-                updatedText = [...selectedText.split(' ')].slice(0, -1).reverse().join(' ')
+            if (text[end] !== ' ') {
+                updatedText += ' '
+            }
+            if (text[start] !== ' ' && text[start - 1] !== ' ') {
+                console.log('start')
+                updatedText = convertSelectedToArray(selectedText).slice(0, 1).reverse().join(' ')
+            }
+            console.log('text[end]', text[end], 'text[end - 1]', text[end - 1])
+            if (text[end] !== ' ' && text[end - 1] !== ' ') {
+                console.log('end')
+                updatedText = convertSelectedToArray(selectedText).slice(0, -1).reverse().join(' ')
             }
             replaceSelectedText(updatedText);
         }
@@ -75,7 +91,7 @@
 
             });
             bold.addEventListener('click', transformSelectedToBold, false)
-            reverse.addEventListener('click', reverseSelected, false)
+            reverse.addEventListener('click', reverseSelected.bind(this, text.innerText), false)
 
         }
 
