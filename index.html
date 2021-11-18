@@ -41,36 +41,40 @@
             range.insertNode(span);
         }
 
-        const convertSelectedToArray = (text) => {
-            const r = [...text.trim().split(' ')]
-            console.log('r', r)
-            return r
-        }
-
+        const convertSelectedToArray = (text) => [...text.trim().split(' ')]
+     
         const reverseSelected = (text) => {
             const selection = getSelectedText();
             let selectedText = selection.toString();
             const start = selection.anchorOffset;
             const end = selection.focusOffset;
-            console.log('start', start, 'end', end)
+            console.log('start', start, 'end', end, 'length', text.length)
             let updatedText = convertSelectedToArray(selectedText).reverse().join(' ')
-            console.log('text[0]', text[0])
-            console.log('text[start]', text[start], 'text[start - 1]', text[start - 1])
-            if (text[start - 1] !== ' ') {
+           // console.log('text[0]', text[0])
+           if (text[start - 1] !== ' ') {
                 updatedText = ' ' + updatedText
             }
             if (text[end] !== ' ') {
                 updatedText += ' '
             }
-            if (text[start] !== ' ' && text[start - 1] !== ' ') {
+          
+            console.log('text[start]', text[start], 'text[start - 1]', text[start - 1])
+            if (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) {
                 console.log('start')
-                updatedText = convertSelectedToArray(selectedText).slice(0, 1).reverse().join(' ')
+                const selectedArr = convertSelectedToArray(selectedText)
+                const first = selectedArr[0]
+                selectedArr.shift()
+                updatedText =first + ' ' +selectedArr.reverse().join(' ')
             }
             console.log('text[end]', text[end], 'text[end - 1]', text[end - 1])
-            if (text[end] !== ' ' && text[end - 1] !== ' ') {
+            if (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) {
                 console.log('end')
-                updatedText = convertSelectedToArray(selectedText).slice(0, -1).reverse().join(' ')
+                const selectedArr = convertSelectedToArray(selectedText)
+                const last = selectedArr[selectedArr.length-1]
+                selectedArr.pop()
+                updatedText =selectedArr.reverse().join(' ') + ' ' + last
             }
+           
             replaceSelectedText(updatedText);
         }
 
