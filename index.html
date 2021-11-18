@@ -41,41 +41,62 @@
             range.insertNode(span);
         }
 
-        const convertSelectedToArray = (text) => [...text.trim().split(' ')]
-     
+        const convertSelectedToArray = (text, selectedText, start, end) => {
+            let selectedArr = [...selectedText.split(' ')]
+            if (text[start] === undefined) {
+                selectedArr.push(' ')
+            }
+            console.log('end', end, text[end])
+            if (text[end - 1] === undefined) {
+                selectedArr.unshift(' ')
+
+            }
+            //              console.log('start',start, text[start], text[start-1])
+            if (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) {
+
+                //              console.log('start', selectedArr)
+                const first = selectedArr[0]
+
+                selectedArr.shift()
+
+                if (!selectedArr[selectedArr.length - 1]) {
+                    selectedArr.pop()
+                    selectedArr.unshift(' ')
+                }
+
+                selectedArr.push(first)
+                //            console.log('start after', selectedArr)
+            }
+            console.log('end', end, text[end - 1], text[end])
+            if (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) {
+                console.log('end', selectedArr)
+                const last = selectedArr[selectedArr.length - 1]
+
+                selectedArr.pop()
+                console.log('pop', !selectedArr[0])
+              
+                if (!selectedArr[0]) {
+                    selectedArr.push(' ')
+                    console.log('in', selectedArr)
+                }
+                selectedArr.unshift(last)
+                console.log('end after', selectedArr)
+            }
+
+
+            return selectedArr.reverse()
+        }
+
         const reverseSelected = (text) => {
             const selection = getSelectedText();
             let selectedText = selection.toString();
             const start = selection.anchorOffset;
             const end = selection.focusOffset;
-            console.log('start', start, 'end', end, 'length', text.length)
-            let updatedText = convertSelectedToArray(selectedText).reverse().join(' ')
-           // console.log('text[0]', text[0])
-           if (text[start - 1] !== ' ') {
-                updatedText = ' ' + updatedText
-            }
-            if (text[end] !== ' ') {
-                updatedText += ' '
-            }
-          
-            console.log('text[start]', text[start], 'text[start - 1]', text[start - 1])
-            if (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) {
-                console.log('start')
-                const selectedArr = convertSelectedToArray(selectedText)
-                const first = selectedArr[0]
-                selectedArr.shift()
-                updatedText =first + ' ' +selectedArr.reverse().join(' ')
-            }
-            console.log('text[end]', text[end], 'text[end - 1]', text[end - 1])
-            if (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) {
-                console.log('end')
-                const selectedArr = convertSelectedToArray(selectedText)
-                const last = selectedArr[selectedArr.length-1]
-                selectedArr.pop()
-                updatedText =selectedArr.reverse().join(' ') + ' ' + last
-            }
-           
-            replaceSelectedText(updatedText);
+
+            console.log(start, end)
+            const r = convertSelectedToArray(text, selectedText, start, end)
+            console.log('r', r)
+            replaceSelectedText([...r].join(' '));
         }
 
         window.onload = () => {
