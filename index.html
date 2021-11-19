@@ -8,7 +8,7 @@
     <script>
 
         const replaceSelectedText = (replacementText) => {
-            var sel, range;
+            let sel, range;
             if (window.getSelection) {
                 sel = window.getSelection();
                 if (sel.rangeCount) {
@@ -36,7 +36,7 @@
             let span = document.createElement('SPAN');
             span.classList.add('bold');
             span.textContent = selected.toString();
-            var range = selected.getRangeAt(0);
+            let range = selected.getRangeAt(0);
             range.deleteContents();
             range.insertNode(span);
         }
@@ -62,23 +62,31 @@
             arr.pop()
             return arr
         }
+        const isEmptyOrSpaces = (str) => str === null || str.match(/^ *$/) !== null;
+
+
         const convertSelectedToArray = (text, selectedText, start, end) => {
             let selectedArr = [...selectedText.split(' ')]
             let result = selectedArr
-            const isEndNotValid = (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) || !text[end - 1];
-            const isStartNotValid = (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) || !text[start];
+            console.log('end length = ', text[end - 1].length)
+            const isEndNotValid = (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length)
+                || !text[end - 1] || isEmptyOrSpaces( text[end - 1]);
+            const isStartNotValid = (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0)
+                || !text[start] || isEmptyOrSpaces(text[start]);
             if (isEndNotValid && !isStartNotValid) {
-                result = replaceLast(selectedArr)
+                console.log('endNot valid', selectedArr)
+                result = replaceLast(selectedArr);
             }
             if (isStartNotValid && !isEndNotValid) {
-                result = replaceFirst(selectedArr)
+                console.log('startNot valid', selectedArr)
+                result = replaceFirst(selectedArr);
             }
 
             if (isEndNotValid && isStartNotValid) {
                 result = selectedArr.swap(0, selectedArr.length - 1)
             }
 
-            return result.reverse()
+            return result.reverse();
         }
 
         const reverseSelected = (text) => {
