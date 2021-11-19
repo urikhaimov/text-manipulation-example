@@ -46,28 +46,38 @@
             let first = arr[0]
             arr.shift()
             arr.push(first)
-
-            console.log('arr1 first', arr)
             return arr
+        }
+
+        Array.prototype.swap = function (x, y) {
+            let b = this[x];
+            this[x] = this[y];
+            this[y] = b;
+            return this;
         }
         const replaceLast = (data) => {
             let arr = [...data]
             let last = arr[arr.length - 1]
             arr.unshift(last)
             arr.pop()
-            console.log('last', arr)
             return arr
         }
         const convertSelectedToArray = (text, selectedText, start, end) => {
             let selectedArr = [...selectedText.split(' ')]
             let result = selectedArr
-            console.log('arr', selectedArr)
-            if ((text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) || !text[start]) {
-                result = replaceFirst(selectedArr)
-            }
-            if ((text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) || !text[end - 1]) {
+            const isEndNotValid = (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length) || !text[end - 1];
+            const isStartNotValid = (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0) || !text[start];
+            if (isEndNotValid && !isStartNotValid) {
                 result = replaceLast(selectedArr)
             }
+            if (isStartNotValid && !isEndNotValid) {
+                result = replaceFirst(selectedArr)
+            }
+
+            if (isEndNotValid && isStartNotValid) {
+                result = selectedArr.swap(0, selectedArr.length - 1)
+            }
+
             return result.reverse()
         }
 
@@ -76,11 +86,7 @@
             let selectedText = selection.toString();
             const start = selection.anchorOffset;
             const end = selection.focusOffset;
-
-            console.log(start, end)
-            const r = convertSelectedToArray(text, selectedText, start, end)
-            console.log('r', r)
-            replaceSelectedText(r.join(' '));
+            replaceSelectedText(convertSelectedToArray(text, selectedText, start, end).join(' '));
         }
 
         window.onload = () => {
@@ -132,7 +138,7 @@
 <body>
     <div id="root">
 
-        <div contenteditable="true" id="text">fooobar fo foo foo fooooo
+        <div contenteditable="true" id="text">fooobar fo foo lastttt fooooo
 
 
         </div>
