@@ -96,6 +96,8 @@
                 tooltip.style.visibility = 'visible';
                 tooltip.style.top = `${e.pageY}px`;
                 tooltip.style.left = `${e.pageX}px`;
+            } else {
+                closeToolTip();
             }
         }
 
@@ -109,8 +111,17 @@
             const reverse = document.getElementById('reverse')
             const tooltip = document.getElementById('tooltip')
             text.addEventListener('keyup', (e) => {
-                // openTooltip(e)
+                //   console.log('keyup',e.key)
             });
+            text.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') openTooltip.bind(null, e);
+            });
+
+            text.addEventListener('keypress', (e) => {
+                console.log('keypress', e.key)
+                openTooltip.bind(null, e);
+            });
+
 
             text.addEventListener('mouseup', e => {
                 openTooltip(e);
