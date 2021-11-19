@@ -89,13 +89,32 @@
             ).join(' '));
             closeToolTip();
         }
+        const getSelectionCoords = (atStart) => {
+            const sel = window.getSelection();
 
-        const openTooltip = (e) => {
-            console.log('len', getSelectedText().toString().length)
+            // check if selection exists
+            if (!sel.rangeCount) return null;
+
+            // get range
+            let range = sel.getRangeAt(0).cloneRange();
+            if (!range.getClientRects) return null;
+
+            // get client rect
+            range.collapse(atStart);
+            let rects = range.getClientRects();
+            if (rects.length <= 0) return null;
+
+            // return coord
+            let rect = rects[0];
+            return { x: rect.x, y: rect.y };
+        }
+        const openTooltip = () => {
+            let coordinates={x:0,y:0} 
             if (getSelectedText().toString().length > 0) {
+                coordinates = getSelectionCoords(0, 0)
                 tooltip.style.visibility = 'visible';
-                tooltip.style.top = `${e.pageY}px`;
-                tooltip.style.left = `${e.pageX}px`;
+                tooltip.style.left = `${coordinates.x}px`;
+                tooltip.style.top = `${coordinates.y}px`;
             } else {
                 closeToolTip();
             }
@@ -107,24 +126,17 @@
 
         window.onload = () => {
             const text = document.getElementById('text');
-            const bold = document.getElementById('bold')
-            const reverse = document.getElementById('reverse')
-            const tooltip = document.getElementById('tooltip')
-            text.addEventListener('keyup', (e) => {
-                //   console.log('keyup',e.key)
-            });
+            const bold = document.getElementById('bold');
+            const reverse = document.getElementById('reverse');
+            const tooltip = document.getElementById('tooltip');
+
+            
             text.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight') openTooltip.bind(null, e);
+                if (e.key === 'ArrowRight') openTooltip();
             });
-
-            text.addEventListener('keypress', (e) => {
-                console.log('keypress', e.key)
-                openTooltip.bind(null, e);
-            });
-
 
             text.addEventListener('mouseup', e => {
-                openTooltip(e);
+                openTooltip();
             });
 
             bold.addEventListener('click', transformSelectedToBold, false)
@@ -215,7 +227,7 @@
         <div id="tooltip">
             <button id="bold">B</button>
             <button id="reverse">R</button>
-        </div><br><br>
+        </div>
 
     </div>
 
