@@ -43,6 +43,7 @@
         }
 
         const replaceFirst = (data) => {
+            console.log('first')
             let arr = [...data]
             let first = arr[0]
             arr.shift()
@@ -51,12 +52,14 @@
         }
 
         Array.prototype.swap = function (x, y) {
+            console.log('swap')
             let b = this[x];
             this[x] = this[y];
             this[y] = b;
             return this;
         }
         const replaceLast = (data) => {
+            console.log('last')
             let arr = [...data]
             let last = arr[arr.length - 1]
             arr.unshift(last)
@@ -64,15 +67,17 @@
             return arr
         }
 
-        const isEmptyOrSpaces = (str) => str === null || str.match(/^ *$/) !== null;
+        const isEmptyOrSpaces = (str) => str === undefined || str === null || str.match(/^ *$/) !== null;
 
         const convertSelectedToArray = (text, selectedText, start, end) => {
             let selectedArr = [...selectedText.split(' ')];
-            let result = selectedArr;
-            const isEndNotValid = (text[end] !== ' ' && text[end - 1] !== ' ' && end < text.length)
-                || !text[end - 1] || isEmptyOrSpaces(text[end - 1]);
-            const isStartNotValid = (text[start] !== ' ' && text[start - 1] !== ' ' && start > 0)
-                || !text[start] || isEmptyOrSpaces(text[start]);
+            console.log('selectedArr', selectedArr)
+            let result = [...selectedArr];
+            console.log('result', result)
+            const isEndNotValid = (!isEmptyOrSpaces(text[end]) && !isEmptyOrSpaces(text[end - 1])  && end < text.length)
+                || isEmptyOrSpaces(text[end - 1]);
+            const isStartNotValid = (!isEmptyOrSpaces(text[start]) && isEmptyOrSpaces(text[start - 1]) && start > 0)
+                || isEmptyOrSpaces(text[start]);
 
             if (isEndNotValid && !isStartNotValid) result = replaceLast(selectedArr);
             if (isStartNotValid && !isEndNotValid) result = replaceFirst(selectedArr);
@@ -109,7 +114,7 @@
             return { x: rect.x, y: rect.y };
         }
         const openTooltip = () => {
-            let coordinates={x:0,y:0} 
+            let coordinates = { x: 0, y: 0 }
             if (getSelectedText().toString().length > 0) {
                 coordinates = getSelectionCoords(0, 0)
                 tooltip.style.visibility = 'visible';
@@ -130,7 +135,7 @@
             const reverse = document.getElementById('reverse');
             const tooltip = document.getElementById('tooltip');
 
-            
+
             text.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight') openTooltip();
             });
