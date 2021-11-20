@@ -67,23 +67,23 @@
             return arr
         }
 
-        const isEmptyOrSpaces = (str) => str === undefined || str === null || str.match(/^ *$/) !== null;
+        const isEmptyOrSpaces = (str) => str === null || str.match(/^ *$/) !== null;
 
         const convertSelectedToArray = (selectedObj) => {
             const selectedText = selectedObj.selectedText;
-
             const after = selectedObj.after;
             const before = selectedObj.before;
+
             let selectedArr = [...selectedText.split(' ')];
             const len = selectedText.length;
             const first = selectedText[0];
-            const last = selectedText[len - 1]
-             console.log('first', first)
-             console.log('before', before)
-             console.log('last', last)
-             console.log('after', after)
+            const last = selectedText[len - 1];
+            // console.log('first', first)
+            // console.log('before', before)
+            // console.log('last', last)
+            // console.log('after', after)
             let result = [...selectedArr];
-            
+
             const isEndNotValid = (!isEmptyOrSpaces(after) && !isEmptyOrSpaces(last))
                 || isEmptyOrSpaces(last);
             const isStartNotValid = (!isEmptyOrSpaces(first) && !isEmptyOrSpaces(before))
@@ -91,7 +91,8 @@
 
             if (isEndNotValid && !isStartNotValid) result = replaceLast(selectedArr);
             if (isStartNotValid && !isEndNotValid) result = replaceFirst(selectedArr);
-            if (isEndNotValid && isStartNotValid) result = [...selectedArr].swap(0, selectedArr.length - 1)
+            if (isEndNotValid && isStartNotValid) result = [...selectedArr].swap(0, selectedArr.length - 1);
+
             return result.reverse();
         }
 
@@ -120,12 +121,12 @@
 
 
 
-        const reverseSelected = () => {
+        const reverseSelectedWords = () => {
             replaceSelectedText(convertSelectedToArray(getExternalIndexesAndSelectedText()).join(' '));
             closeToolTip();
         }
         const getSelectionCoords = (atStart) => {
-            const sel = window.getSelection();
+            const sel = getSelectedText();
 
             // check if selection exists
             if (!sel.rangeCount) return null;
@@ -147,7 +148,7 @@
         const openTooltip = () => {
             let coordinates = { x: 0, y: 0 }
             if (getSelectedText().toString().length > 0) {
-                coordinates = getSelectionCoords(0, 0)
+                coordinates = getSelectionCoords(0, 0);
                 tooltip.style.visibility = 'visible';
                 tooltip.style.left = `${coordinates.x}px`;
                 tooltip.style.top = `${coordinates.y + 12}px`;
@@ -161,10 +162,10 @@
         }
 
         window.onload = () => {
-            const body = document.getElementsByTagName('body')
             const bold = document.getElementById('bold');
             const reverse = document.getElementById('reverse');
             const tooltip = document.getElementById('tooltip');
+
             text.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight') openTooltip();
             });
@@ -173,8 +174,8 @@
                 openTooltip();
             });
 
-            bold.addEventListener('click', transformSelectedToBold, false)
-            reverse.addEventListener('click', reverseSelected, false)
+            bold.addEventListener('click', transformSelectedToBold, false);
+            reverse.addEventListener('click', reverseSelectedWords, false);
 
         }
 
@@ -195,11 +196,6 @@
         .bold {
             font-weight: bold;
         }
-
-        /* Show the tooltip text when you mouse over the tooltip container */
-        /* .tooltip:hover .tooltiptext {
-  visibility: visible;
-} */
     </style>
 </head>
 
